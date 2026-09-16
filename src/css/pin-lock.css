@@ -1,0 +1,146 @@
+/* ==========================================================================
+   4-DIGIT PIN LOCK SCREEN STYLING
+   ========================================================================== */
+
+.pin-lock-screen {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.95), #060911 80%);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.pin-lock-modal {
+  width: 100%;
+  max-width: 380px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pin-user-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.pin-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #042f20;
+  box-shadow: var(--shadow-glow-emerald);
+  margin-bottom: 1rem;
+}
+
+.pin-greeting {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.pin-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* PIN Dots */
+.pin-dots-wrapper {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 2.25rem;
+}
+
+.pin-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pin-dot.filled {
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 14px var(--primary-glow);
+  transform: scale(1.15);
+}
+
+.pin-dots-wrapper.error {
+  animation: pinShake 0.4s ease-in-out;
+}
+
+.pin-dots-wrapper.error .pin-dot {
+  border-color: var(--rose);
+  background: var(--rose);
+  box-shadow: 0 0 14px var(--rose-glow);
+}
+
+/* Keypad */
+.pin-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 280px;
+}
+
+.pin-key {
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.pin-key:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--border-glass-bright);
+  transform: scale(1.05);
+}
+
+.pin-key:active {
+  background: var(--primary-light);
+  color: var(--primary);
+  transform: scale(0.95);
+}
+
+.pin-key-action {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.pin-key-action:hover {
+  color: #fff;
+}
+
+@keyframes pinShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-12px); }
+  40%, 80% { transform: translateX(12px); }
+}

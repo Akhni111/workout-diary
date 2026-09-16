@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workout Diary - บันทึกและวางแผนการออกกำลังกาย</title>
+  <meta name="description" content="แอปพลิเคชันบันทึกการออกกำลังกาย โภชนาการ กิจกรรมแข่งขัน สถิติร่างกาย และโปรแกรมฟิตเนสระดับมืออาชีพ">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="/src/css/main.css">
+  <link rel="stylesheet" href="/src/css/layout.css">
+  <link rel="stylesheet" href="/src/css/components.css">
+  <link rel="stylesheet" href="/src/css/calendar.css">
+  <link rel="stylesheet" href="/src/css/pin-lock.css">
+  <link rel="stylesheet" href="/src/css/responsive.css">
+</head>
+<body class="dark-theme">
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- App Container -->
+  <div id="app" class="app-root">
+    
+    <!-- ================= AUTH SCREEN ================= -->
+    <div id="auth-screen" class="auth-screen hidden">
+      <div class="auth-card glass-panel">
+        <div class="auth-brand">
+          <div class="brand-badge">
+            <i data-lucide="flame" class="icon-brand"></i>
+          </div>
+          <h1 class="brand-title">Workout<span class="gradient-text">Diary</span></h1>
+          <p class="brand-subtitle">บันทึก ทุกความก้าวหน้า เพื่อสุขภาพที่ดีกว่าเดิม</p>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab-btn active" id="tab-login-btn">เข้าสู่ระบบ</button>
+          <button class="auth-tab-btn" id="tab-register-btn">สมัครสมาชิก</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="auth-form">
+          <div class="form-group">
+            <label for="login-username"><i data-lucide="user"></i> ชื่อผู้ใช้ หรือ อีเมล (Username / Email)</label>
+            <input type="text" id="login-username" class="form-input" placeholder="ระบุ Username หรือ อีเมล เช่น alex หรือ alex@fit.com" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="login-password"><i data-lucide="lock"></i> รหัสผ่าน (Password)</label>
+            <input type="password" id="login-password" class="form-input" placeholder="ระบุรหัสผ่าน" required autocomplete="current-password">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-submit-login">
+              <span>เข้าสู่ระบบ</span>
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+          <div class="auth-demo-hint">
+            <p>💡 บัญชีทดลอง: <strong>alex</strong> (หรือ <strong>alex@fit.com</strong>) / รหัสผ่าน: <strong>123456</strong> (PIN: <strong>1234</strong>)</p>
+          </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="auth-form hidden">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-fullname"><i data-lucide="user-check"></i> ชื่อ-นามสกุล / ชื่อเล่น</label>
+              <input type="text" id="reg-fullname" class="form-input" placeholder="เช่น กิตติพงษ์ ฟิตเนส" required>
+            </div>
+            <div class="form-group">
+              <label for="reg-username"><i data-lucide="at-sign"></i> Username</label>
+              <input type="text" id="reg-username" class="form-input" placeholder="เช่น kittipong" required autocomplete="username">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="reg-email"><i data-lucide="mail"></i> อีเมล (Email สำหรับเข้าสู่ระบบ)</label>
+            <input type="email" id="reg-email" class="form-input" placeholder="เช่น user@example.com" required autocomplete="email">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-password"><i data-lucide="key"></i> รหัสผ่าน</label>
+              <input type="password" id="reg-password" class="form-input" placeholder="อย่างน้อย 6 ตัวอักษร" required minlength="6" autocomplete="new-password">
+            </div>
+            <div class="form-group">
+              <label for="reg-pin"><i data-lucide="shield"></i> ตั้งรหัส PIN 4 หลัก</label>
+              <input type="password" id="reg-pin" class="form-input" placeholder="ตัวเลข 4 หลัก เช่น 1234" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-gender"><i data-lucide="smile"></i> เพศ</label>
+              <select id="reg-gender" class="form-input">
+                <option value="male">ชาย (Male)</option>
+                <option value="female">หญิง (Female)</option>
+                <option value="other">อื่นๆ (Other)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reg-dob"><i data-lucide="calendar"></i> วันเกิด</label>
+              <input type="date" id="reg-dob" class="form-input" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-weight"><i data-lucide="scale"></i> น้ำหนัก (kg)</label>
+              <input type="number" id="reg-weight" class="form-input" placeholder="เช่น 68.5" step="0.1" required>
+            </div>
+            <div class="form-group">
+              <label for="reg-height"><i data-lucide="ruler"></i> ส่วนสูง (cm)</label>
+              <input type="number" id="reg-height" class="form-input" placeholder="เช่น 175" step="0.5" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-submit-register">
+              <span>ลงทะเบียนเข้าใช้งาน</span>
+              <i data-lucide="check"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= PIN LOCK OVERLAY ================= -->
+    <div id="pin-lock-screen" class="pin-lock-screen hidden">
+      <div class="pin-lock-modal glass-panel">
+        <div class="pin-user-badge">
+          <div class="pin-avatar" id="pin-avatar-preview">AD</div>
+          <h2 class="pin-greeting" id="pin-user-greeting">สวัสดี, Alex</h2>
+          <p class="pin-subtitle">กรุณาใส่รหัส PIN 4 หลักเพื่อปลดล็อก</p>
+        </div>
+
+        <!-- PIN Dots Display -->
+        <div class="pin-dots-wrapper" id="pin-dots">
+          <div class="pin-dot" data-index="0"></div>
+          <div class="pin-dot" data-index="1"></div>
+          <div class="pin-dot" data-index="2"></div>
+          <div class="pin-dot" data-index="3"></div>
+        </div>
+
+        <!-- Keypad -->
+        <div class="pin-keypad" id="pin-keypad">
+          <button type="button" class="pin-key" data-digit="1">1</button>
+          <button type="button" class="pin-key" data-digit="2">2</button>
+          <button type="button" class="pin-key" data-digit="3">3</button>
+          <button type="button" class="pin-key" data-digit="4">4</button>
+          <button type="button" class="pin-key" data-digit="5">5</button>
+          <button type="button" class="pin-key" data-digit="6">6</button>
+          <button type="button" class="pin-key" data-digit="7">7</button>
+          <button type="button" class="pin-key" data-digit="8">8</button>
+          <button type="button" class="pin-key" data-digit="9">9</button>
+          <button type="button" class="pin-key pin-key-action" id="btn-pin-switch-user" title="สลับผู้ใช้/ล็อกอินด้วยรหัสผ่าน">
+            <i data-lucide="log-out"></i>
+          </button>
+          <button type="button" class="pin-key" data-digit="0">0</button>
+          <button type="button" class="pin-key pin-key-action" id="btn-pin-backspace" title="ลบตัวเลข">
+            <i data-lucide="delete"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MAIN DASHBOARD SHELL ================= -->
+    <div id="main-layout" class="main-layout hidden">
+      
+      <!-- DESKTOP / TABLET SIDEBAR -->
+      <aside class="app-sidebar" id="app-sidebar">
+        <div class="sidebar-header">
+          <div class="brand-badge small">
+            <i data-lucide="flame" class="icon-brand"></i>
+          </div>
+          <div class="brand-text">
+            <h2>Workout<span>Diary</span></h2>
+            <span class="version-tag">PRO v1.0</span>
+          </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="sidebar-nav">
+          <div class="nav-section-title">เมนูหลัก</div>
+          <button class="nav-item active" data-view="dashboard" id="nav-dashboard">
+            <i data-lucide="layout-dashboard"></i>
+            <span>แดชบอร์ดสรุปผล</span>
+          </button>
+          <button class="nav-item" data-view="daily-logs" id="nav-daily-logs">
+            <i data-lucide="clipboard-edit"></i>
+            <span>บันทึกรายวัน</span>
+            <span class="nav-badge" id="logs-count-badge">วันนี้</span>
+          </button>
+          <button class="nav-item" data-view="calendar" id="nav-calendar">
+            <i data-lucide="calendar"></i>
+            <span>ปฏิทินกิจกรรม</span>
+          </button>
+          <button class="nav-item" data-view="programs" id="nav-programs">
+            <i data-lucide="dumbbell"></i>
+            <span>โปรแกรมออกกำลังกาย</span>
+          </button>
+          <button class="nav-item" data-view="friends" id="nav-friends">
+            <i data-lucide="users"></i>
+            <span>เพื่อน & คอมมูนิตี้</span>
+          </button>
+
+          <div class="nav-section-title">โปรไฟล์ & ระบบ</div>
+          <button class="nav-item" data-view="profile" id="nav-profile">
+            <i data-lucide="user"></i>
+            <span>โปรไฟล์ & สัดส่วน</span>
+          </button>
+        </nav>
+
+        <!-- Sidebar User Card & Actions -->
+        <div class="sidebar-footer">
+          <div class="sidebar-user-card" id="sidebar-user-info">
+            <div class="user-avatar-sm" id="user-avatar-text">AL</div>
+            <div class="user-meta">
+              <span class="user-name-label" id="user-name-display">Alex Fit</span>
+              <span class="user-role-label">สมาชิกทั่วไป</span>
+            </div>
+            <button class="btn-icon-soft" id="btn-lock-screen" title="ล็อกหน้าจอด้วย PIN">
+              <i data-lucide="lock"></i>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT WRAPPER -->
+      <main class="app-main-content">
+        
+        <!-- TOP APP BAR (MOBILE & DESKTOP) -->
+        <header class="app-header">
+          <div class="header-left">
+            <button class="btn-icon mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation">
+              <i data-lucide="menu"></i>
+            </button>
+            <div class="header-title-box">
+              <h1 class="header-page-title" id="page-title">แดชบอร์ดสรุปผล</h1>
+              <p class="header-page-date" id="current-date-display">วันพุธที่ 16 กันยายน 2026</p>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <!-- Quick Add Action Button -->
+            <div class="dropdown-wrapper">
+              <button class="btn btn-primary btn-sm btn-glow" id="btn-quick-log">
+                <i data-lucide="plus"></i>
+                <span class="hide-on-mobile">บันทึกด่วน</span>
+              </button>
+              <div class="dropdown-menu hidden" id="quick-log-dropdown">
+                <button class="dropdown-item" data-open-modal="modal-food-log">
+                  <i data-lucide="utensils" class="text-emerald"></i>
+                  <span>บันทึกอาหาร & แคลอรี่</span>
+                </button>
+                <button class="dropdown-item" data-open-modal="modal-workout-log">
+                  <i data-lucide="dumbbell" class="text-amber"></i>
+                  <span>บันทึกการออกกำลังกาย</span>
+                </button>
+                <button class="dropdown-item" data-open-modal="modal-outdoor-log">
+                  <i data-lucide="trophy" class="text-cyan"></i>
+                  <span>กิจกรรมแข่งขัน / Outdoor</span>
+                </button>
+                <button class="dropdown-item" data-open-modal="modal-body-log">
+                  <i data-lucide="activity" class="text-purple"></i>
+                  <span>บันทึกน้ำหนัก & สัดส่วน</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Lock App Button -->
+            <button class="btn-icon btn-glass" id="btn-header-lock" title="ล็อกหน้าจอด้วย PIN">
+              <i data-lucide="lock"></i>
+            </button>
+
+            <!-- User Menu -->
+            <button class="btn-icon btn-glass text-rose" id="btn-logout" title="ออกจากระบบ">
+              <i data-lucide="log-out"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- VIEWS CONTAINER -->
+        <div class="view-viewport" id="view-viewport">
+          
+          <!-- ================= VIEW 1: DASHBOARD ================= -->
+          <section id="view-dashboard" class="app-view active">
+            
+            <!-- Hero Stats Grid -->
+            <div class="stats-grid">
+              <!-- Card 1: Calorie Summary -->
+              <div class="stat-card glass-panel">
+                <div class="stat-header">
+                  <span class="stat-badge bg-emerald-light text-emerald"><i data-lucide="utensils"></i> พลังงานวันนี้</span>
+                  <span class="stat-trend" id="stat-calorie-goal-text">เป้าหมาย 2,000 kcal</span>
+                </div>
+                <div class="stat-body">
+                  <div class="stat-value-group">
+                    <span class="stat-number text-emerald" id="dash-cal-consumed">0</span>
+                    <span class="stat-unit">kcal ได้รับ</span>
+                  </div>
+                  <div class="stat-sub">
+                    <span>เผาผลาญ: <strong id="dash-cal-burned" class="text-amber">0 kcal</strong></span>
+                    <span>คงเหลือ: <strong id="dash-cal-remaining" class="text-cyan">2,000 kcal</strong></span>
+                  </div>
+                </div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar bg-emerald" id="dash-cal-progress" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Card 2: Workouts Count -->
+              <div class="stat-card glass-panel">
+                <div class="stat-header">
+                  <span class="stat-badge bg-amber-light text-amber"><i data-lucide="dumbbell"></i> ออกกำลังกาย</span>
+                  <span class="stat-trend" id="stat-active-streak">🔥 3 วันติดต่อกัน</span>
+                </div>
+                <div class="stat-body">
+                  <div class="stat-value-group">
+                    <span class="stat-number text-amber" id="dash-workout-count">0</span>
+                    <span class="stat-unit">กิจกรรมวันนี้</span>
+                  </div>
+                  <div class="stat-sub">
+                    <span>เวทเทรนนิ่ง: <strong id="dash-weight-sets">0 เซ็ต</strong></span>
+                    <span>Cardio: <strong id="dash-cardio-mins">0 นาที</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 3: Outdoor & Events -->
+              <div class="stat-card glass-panel">
+                <div class="stat-header">
+                  <span class="stat-badge bg-cyan-light text-cyan"><i data-lucide="map-pin"></i> กิจกรรม / แข่งขัน</span>
+                  <span class="stat-trend">Outdoor & Events</span>
+                </div>
+                <div class="stat-body">
+                  <div class="stat-value-group">
+                    <span class="stat-number text-cyan" id="dash-outdoor-distance">0.0</span>
+                    <span class="stat-unit">km รวมสะสม</span>
+                  </div>
+                  <div class="stat-sub">
+                    <span>รายการแข่งขัน: <strong id="dash-events-count">0 รายการ</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 4: Body & BMI -->
+              <div class="stat-card glass-panel">
+                <div class="stat-header">
+                  <span class="stat-badge bg-purple-light text-purple"><i data-lucide="scale"></i> สถิติร่างกาย & BMI</span>
+                  <span class="stat-trend badge-bmi-status" id="dash-bmi-badge">สมส่วน</span>
+                </div>
+                <div class="stat-body">
+                  <div class="stat-value-group">
+                    <span class="stat-number text-purple" id="dash-current-weight">--</span>
+                    <span class="stat-unit">kg (BMI: <span id="dash-current-bmi">--</span>)</span>
+                  </div>
+                  <div class="stat-sub">
+                    <span>ส่วนสูง: <strong id="dash-current-height">-- cm</strong></span>
+                    <span>เอว: <strong id="dash-current-waist">-- นิ้ว</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dashboard Split Layout -->
+            <div class="dashboard-grid-2col">
+              
+              <!-- Left: Today's Timeline / Activity Log -->
+              <div class="card glass-panel">
+                <div class="card-header">
+                  <div class="card-title-box">
+                    <h3 class="card-title"><i data-lucide="list-ordered" class="text-primary"></i> กิจกรรมที่บันทึกวันนี้</h3>
+                    <p class="card-subtitle" id="dash-today-label">รายการอาหาร การออกกำลังกาย และกิจกรรม</p>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" id="btn-goto-daily-logs">
+                    <span>ดูทั้งหมด</span>
+                    <i data-lucide="chevron-right"></i>
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="activity-timeline" id="dash-today-timeline">
+                    <!-- Dynamic timeline items or empty state -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Nutrition Macro & Quick Recommendations -->
+              <div class="card glass-panel">
+                <div class="card-header">
+                  <div class="card-title-box">
+                    <h3 class="card-title"><i data-lucide="pie-chart" class="text-emerald"></i> สัดส่วนโภชนาการวันนี้</h3>
+                    <p class="card-subtitle">Macros (โปรตีน / คาร์บ / ไขมัน)</p>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" data-open-modal="modal-food-log">
+                    <i data-lucide="plus"></i> เพิ่มอาหาร
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="macros-breakdown-grid">
+                    <div class="macro-pill macro-protein">
+                      <span class="macro-label">โปรตีน</span>
+                      <span class="macro-value" id="macro-protein-val">0g</span>
+                      <span class="macro-target">เป้า 140g</span>
+                    </div>
+                    <div class="macro-pill macro-carbs">
+                      <span class="macro-label">คาร์โบไฮเดรต</span>
+                      <span class="macro-value" id="macro-carbs-val">0g</span>
+                      <span class="macro-target">เป้า 220g</span>
+                    </div>
+                    <div class="macro-pill macro-fats">
+                      <span class="macro-label">ไขมัน</span>
+                      <span class="macro-value" id="macro-fats-val">0g</span>
+                      <span class="macro-target">เป้า 55g</span>
+                    </div>
+                  </div>
+
+                  <!-- Meal Recommendation Widget -->
+                  <div class="recommendation-widget">
+                    <div class="widget-header">
+                      <h4><i data-lucide="sparkles" class="text-amber"></i> เมนูแนะนำสำหรับวันนี้</h4>
+                      <button class="btn-text btn-xs" id="btn-refresh-meal-rec"><i data-lucide="refresh-cw"></i> สุ่มใหม่</button>
+                    </div>
+                    <div class="recommended-meal-card" id="recommended-meal-box">
+                      <!-- Dynamic meal suggestion -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </section>
+
+          <!-- ================= VIEW 2: DAILY LOGS ================= -->
+          <section id="view-daily-logs" class="app-view">
+            <div class="section-toolbar">
+              <!-- Date Selector Filter -->
+              <div class="date-selector-bar glass-panel">
+                <button class="btn-icon btn-glass" id="btn-prev-day"><i data-lucide="chevron-left"></i></button>
+                <div class="current-selected-date-box">
+                  <i data-lucide="calendar" class="text-primary"></i>
+                  <input type="date" id="daily-log-date-picker" class="date-picker-input">
+                  <span id="daily-log-date-text" class="date-label-lg">วันนี้</span>
+                </div>
+                <button class="btn-icon btn-glass" id="btn-next-day"><i data-lucide="chevron-right"></i></button>
+              </div>
+
+              <!-- Log Category Tabs -->
+              <div class="category-tabs">
+                <button class="category-tab active" data-log-tab="tab-food">
+                  <i data-lucide="utensils"></i> <span>อาหาร & แคลอรี่</span>
+                </button>
+                <button class="category-tab" data-log-tab="tab-workout">
+                  <i data-lucide="dumbbell"></i> <span>ออกกำลังกาย</span>
+                </button>
+                <button class="category-tab" data-log-tab="tab-outdoor">
+                  <i data-lucide="trophy"></i> <span>Outdoor / แข่งขัน</span>
+                </button>
+                <button class="category-tab" data-log-tab="tab-body">
+                  <i data-lucide="scale"></i> <span>สถิติร่างกาย & BMI</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Tab 1: Food & Nutrition Log -->
+            <div id="tab-food" class="log-tab-content active">
+              <div class="section-header-action">
+                <div class="section-desc">
+                  <h3>บันทึกมื้ออาหารและการคำนวณแคลอรี่</h3>
+                  <p>บันทึกสิ่งที่รับประทานเพื่อควบคุมสารอาหารและพลังงานอย่างแม่นยำ</p>
+                </div>
+                <button class="btn btn-primary" data-open-modal="modal-food-log">
+                  <i data-lucide="plus"></i> <span>เพิ่มรายการอาหาร</span>
+                </button>
+              </div>
+
+              <div class="meals-grid-container" id="meals-list-container">
+                <!-- Dynamic Meals grouped by Breakfast, Lunch, Dinner, Snack -->
+              </div>
+            </div>
+
+            <!-- Tab 2: Workout Activity Log -->
+            <div id="tab-workout" class="log-tab-content">
+              <div class="section-header-action">
+                <div class="section-desc">
+                  <h3>บันทึกการออกกำลังกายและเวทเทรนนิ่ง</h3>
+                  <p>บันทึกท่าฝึก จำนวนเซ็ต น้ำหนักที่ยก และ Cardio ประจำวัน</p>
+                </div>
+                <button class="btn btn-primary" data-open-modal="modal-workout-log">
+                  <i data-lucide="plus"></i> <span>เพิ่มบันทึกออกกำลังกาย</span>
+                </button>
+              </div>
+
+              <div class="workouts-log-container" id="workouts-list-container">
+                <!-- Dynamic workouts list -->
+              </div>
+            </div>
+
+            <!-- Tab 3: Outdoor, Indoor & Competitions -->
+            <div id="tab-outdoor" class="log-tab-content">
+              <div class="section-header-action">
+                <div class="section-desc">
+                  <h3>กิจกรรมนอกสถานที่ และ รายการแข่งขัน</h3>
+                  <p>บันทึกงานวิ่ง ปั่นจักรยาน ไตรกีฬา แบดมินตัน พร้อมรูปภาพเหรียญรางวัลจาก Google Drive</p>
+                </div>
+                <button class="btn btn-primary" data-open-modal="modal-outdoor-log">
+                  <i data-lucide="plus"></i> <span>เพิ่มกิจกรรม Outdoor / แข่งขัน</span>
+                </button>
+              </div>
+
+              <div class="outdoor-log-container" id="outdoor-list-container">
+                <!-- Dynamic outdoor events -->
+              </div>
+            </div>
+
+            <!-- Tab 4: Body Metrics & BMI -->
+            <div id="tab-body" class="log-tab-content">
+              <div class="section-header-action">
+                <div class="section-desc">
+                  <h3>บันทึกค่าน้ำหนัก สัดส่วน และดัชนีมวลกาย (BMI)</h3>
+                  <p>คำนวณค่า BMI อัตโนมัติ พร้อมติดตามการเปลี่ยนแปลงของสัดส่วนกล้ามเนื้อ</p>
+                </div>
+                <button class="btn btn-primary" data-open-modal="modal-body-log">
+                  <i data-lucide="plus"></i> <span>บันทึกน้ำหนัก & สัดส่วน</span>
+                </button>
+              </div>
+
+              <!-- BMI Calculator & Body Stats View -->
+              <div class="body-stats-layout">
+                <div class="card glass-panel bmi-calculator-card">
+                  <div class="card-header">
+                    <h3 class="card-title"><i data-lucide="calculator" class="text-purple"></i> ผลการประเมิน BMI วันนี้</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="bmi-gauge-display" id="bmi-gauge-box">
+                      <div class="bmi-score-circle">
+                        <span class="bmi-number" id="tab-bmi-score">22.2</span>
+                        <span class="bmi-label">BMI</span>
+                      </div>
+                      <div class="bmi-details">
+                        <span class="bmi-category-tag" id="tab-bmi-category">น้ำหนักปกติ (สมส่วน)</span>
+                        <p class="bmi-advice" id="tab-bmi-advice">ร่างกายอยู่ในเกณฑ์สุขภาพดี แนะนำให้ออกกำลังกายแบบเวทเทรนนิ่งควบคู่กับคาร์ดิโอสม่ำเสมอ</p>
+                        <div class="bmi-scale-bar">
+                          <span class="scale-segment seg-under" title="ผอม (< 18.5)"></span>
+                          <span class="scale-segment seg-normal" title="ปกติ (18.5 - 22.9)"></span>
+                          <span class="scale-segment seg-over" title="ท้วม (23.0 - 24.9)"></span>
+                          <span class="scale-segment seg-obese" title="อ้วน (>= 25.0)"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Body Measurements History -->
+                <div class="card glass-panel">
+                  <div class="card-header">
+                    <h3 class="card-title"><i data-lucide="history" class="text-primary"></i> ประวัติสัดส่วนและน้ำหนัก</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="data-table" id="body-metrics-table">
+                        <thead>
+                          <tr>
+                            <th>วันที่</th>
+                            <th>น้ำหนัก (kg)</th>
+                            <th>BMI</th>
+                            <th>รอบอก (นิ้ว)</th>
+                            <th>รอบเอว (นิ้ว)</th>
+                            <th>สะโพก (นิ้ว)</th>
+                            <th>รูปภาพ</th>
+                            <th>จัดการ</th>
+                          </tr>
+                        </thead>
+                        <tbody id="body-metrics-table-body">
+                          <!-- Dynamic rows -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </section>
+
+          <!-- ================= VIEW 3: CALENDAR ================= -->
+          <section id="view-calendar" class="app-view">
+            <div class="calendar-page-layout">
+              
+              <!-- Calendar Header Toolbar -->
+              <div class="calendar-toolbar glass-panel">
+                <div class="calendar-nav-controls">
+                  <button class="btn-icon btn-glass" id="cal-prev-month"><i data-lucide="chevron-left"></i></button>
+                  <h2 class="calendar-month-year" id="cal-month-year-label">กันยายน 2026</h2>
+                  <button class="btn-icon btn-glass" id="cal-next-month"><i data-lucide="chevron-right"></i></button>
+                </div>
+                
+                <div class="calendar-legend">
+                  <span class="legend-item"><span class="legend-dot bg-emerald"></span> อาหาร</span>
+                  <span class="legend-item"><span class="legend-dot bg-amber"></span> ออกกำลังกาย</span>
+                  <span class="legend-item"><span class="legend-dot bg-cyan"></span> Outdoor/แข่งขัน</span>
+                  <span class="legend-item"><span class="legend-dot bg-purple"></span> ชั่งน้ำหนัก</span>
+                </div>
+
+                <button class="btn btn-secondary btn-sm" id="cal-btn-today">
+                  <i data-lucide="calendar-check"></i> <span>กลับสู่วันนี้</span>
+                </button>
+              </div>
+
+              <!-- Calendar Grid Component -->
+              <div class="calendar-grid-card glass-panel">
+                <div class="calendar-weekdays-header">
+                  <div class="weekday-col">อา.</div>
+                  <div class="weekday-col">จ.</div>
+                  <div class="weekday-col">อ.</div>
+                  <div class="weekday-col">พ.</div>
+                  <div class="weekday-col">พฤ.</div>
+                  <div class="weekday-col">ศ.</div>
+                  <div class="weekday-col">ส.</div>
+                </div>
+                <div class="calendar-days-grid" id="calendar-days-container">
+                  <!-- Dynamic day cells generated by JS -->
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ================= VIEW 4: WORKOUT PROGRAMS ================= -->
+          <section id="view-programs" class="app-view">
+            
+            <div class="programs-page-header">
+              <div>
+                <h2>โปรแกรมการออกกำลังกายที่เหมาะสม</h2>
+                <p>เลือกโปรแกรมที่เข้ากับเป้าหมายระดับของคุณ ตั้งแต่ระดับเริ่มต้นจนถึงขั้นแอดวานซ์ พร้อมดาวน์โหลดตารางออกกำลังกาย</p>
+              </div>
+            </div>
+
+            <!-- Program Level Selector Filter -->
+            <div class="program-level-tabs">
+              <button class="program-level-btn active" data-level="all">
+                <i data-lucide="layers"></i> ทั้งหมด
+              </button>
+              <button class="program-level-btn" data-level="beginner">
+                <i data-lucide="sprout" class="text-emerald"></i> Beginner (เริ่มต้น)
+              </button>
+              <button class="program-level-btn" data-level="intermediate">
+                <i data-lucide="zap" class="text-amber"></i> Intermediate (ปานกลาง)
+              </button>
+              <button class="program-level-btn" data-level="advance">
+                <i data-lucide="flame" class="text-rose"></i> Advance (ขั้นสูง)
+              </button>
+            </div>
+
+            <!-- Program Cards Grid -->
+            <div class="programs-grid" id="programs-grid-container">
+              <!-- Dynamically populated from workout-programs.js -->
+            </div>
+
+          </section>
+
+          <!-- ================= VIEW 5: FRIENDS & COMMUNITY ================= -->
+          <section id="view-friends" class="app-view">
+            
+            <div class="section-header-action">
+              <div class="section-desc">
+                <h2>เพื่อน & คอมมูนิตี้ออกกำลังกาย</h2>
+                <p>เพิ่มเพื่อน ร่วมแชร์แรงบันดาลใจ และคำนวณอายุอัตโนมัติจากวันเกิด</p>
+              </div>
+              <button class="btn btn-primary" data-open-modal="modal-add-friend">
+                <i data-lucide="user-plus"></i> <span>เพิ่มเพื่อนใหม่</span>
+              </button>
+            </div>
+
+            <!-- Search & Filter Friends -->
+            <div class="friends-filter-bar glass-panel">
+              <div class="search-input-box">
+                <i data-lucide="search"></i>
+                <input type="text" id="friends-search-input" class="form-input" placeholder="ค้นหาตามชื่อเพื่อน หรือ Bio...">
+              </div>
+              <div class="friends-count-pill" id="friends-count-display">
+                เพื่อนทั้งหมด 4 คน
+              </div>
+            </div>
+
+            <!-- Friends Grid -->
+            <div class="friends-cards-grid" id="friends-grid-container">
+              <!-- Dynamically generated from friends.js -->
+            </div>
+
+          </section>
+
+          <!-- ================= VIEW 6: PROFILE & SETTINGS ================= -->
+          <section id="view-profile" class="app-view">
+            
+            <div class="profile-page-grid">
+              
+              <!-- Left Profile Card -->
+              <div class="card glass-panel profile-hero-card">
+                <div class="profile-hero-content">
+                  <div class="profile-avatar-lg" id="profile-avatar-lg">AL</div>
+                  <h2 class="profile-hero-name" id="profile-hero-name">Alex Fitness</h2>
+                  <p class="profile-hero-username" id="profile-hero-username">@alex</p>
+                  <div class="profile-badges-row">
+                    <span class="badge badge-emerald" id="profile-gender-badge">ชาย</span>
+                    <span class="badge badge-cyan" id="profile-age-badge">อายุ 26 ปี</span>
+                    <span class="badge badge-amber" id="profile-bmi-status-badge">BMI สมส่วน</span>
+                  </div>
+                </div>
+
+                <div class="profile-quick-stats">
+                  <div class="pstat-item">
+                    <span class="pstat-val" id="profile-stat-weight">68.5</span>
+                    <span class="pstat-lbl">น้ำหนัก (kg)</span>
+                  </div>
+                  <div class="pstat-item">
+                    <span class="pstat-val" id="profile-stat-height">175</span>
+                    <span class="pstat-lbl">ส่วนสูง (cm)</span>
+                  </div>
+                  <div class="pstat-item">
+                    <span class="pstat-val" id="profile-stat-bmi">22.4</span>
+                    <span class="pstat-lbl">BMI</span>
+                  </div>
+                </div>
+
+                <div class="profile-actions-box">
+                  <button class="btn btn-secondary btn-block" id="btn-edit-profile-open">
+                    <i data-lucide="edit-3"></i> แก้ไขข้อมูลส่วนตัว
+                  </button>
+                  <button class="btn btn-secondary btn-block" id="btn-change-pin-open">
+                    <i data-lucide="shield-check"></i> ตั้งค่า / เปลี่ยนรหัส PIN 4 หลัก
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right Settings Card -->
+              <div class="card glass-panel">
+                <div class="card-header">
+                  <h3 class="card-title"><i data-lucide="settings" class="text-primary"></i> ตั้งค่าและการจัดการข้อมูล</h3>
+                </div>
+                <div class="card-body">
+                    <div class="setting-item" style="border-left: 3px solid var(--primary); background: rgba(16, 185, 129, 0.04);">
+                      <div class="setting-info">
+                        <h4><i data-lucide="database" class="text-primary"></i> ฐานข้อมูล Supabase Cloud</h4>
+                        <p id="supabase-status-text">URL: https://rfuuwurlwgzorudcssny.supabase.co</p>
+                        <div style="margin-top: 4px;">
+                          <span class="badge badge-emerald" id="supabase-status-badge">⚡ Supabase Ready</span>
+                        </div>
+                      </div>
+                      <div class="setting-action" style="display:flex; flex-direction:column; gap:0.4rem;">
+                        <button class="btn btn-primary btn-sm" id="btn-seed-supabase">
+                          <i data-lucide="cloud-upload"></i> Mockup Data ขึ้น Supabase
+                        </button>
+                        <button class="btn btn-secondary btn-sm" id="btn-sync-supabase">
+                          <i data-lucide="refresh-cw"></i> ซิงค์จาก Supabase
+                        </button>
+                        <button class="btn btn-glass btn-xs" id="btn-view-sql-schema">
+                          <i data-lucide="code"></i> ดูคำสั่ง SQL สร้างตาราง
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <h4>ระบบล็อกหน้าจออัตโนมัติด้วย PIN</h4>
+                        <p>ปลดล็อกด่วนได้ทันทีด้วยรหัสผ่าน 4 หลัก</p>
+                      </div>
+                      <div class="setting-action">
+                        <button class="btn btn-primary btn-sm" id="btn-trigger-pin-lock">
+                          <i data-lucide="lock"></i> ล็อกหน้าจอทันที
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <h4>สำรองและส่งออกข้อมูล (Export Data)</h4>
+                        <p>ดาวน์โหลดบันทึกทั้งหมดเป็นไฟล์ JSON เพื่อสำรองข้อมูล</p>
+                      </div>
+                      <div class="setting-action">
+                        <button class="btn btn-secondary btn-sm" id="btn-export-data">
+                          <i data-lucide="download"></i> ส่งออก JSON
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <h4>นำเข้าข้อมูล (Import Backup)</h4>
+                        <p>กู้คืนข้อมูลบันทึกจากไฟล์สำรอง</p>
+                      </div>
+                      <div class="setting-action">
+                        <label class="btn btn-secondary btn-sm">
+                          <i data-lucide="upload"></i> นำเข้าไฟล์
+                          <input type="file" id="import-data-file" accept=".json" style="display:none;">
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="setting-item">
+                      <div class="setting-info">
+                        <h4>รีเซ็ตข้อมูลตัวอย่าง (Reset Demo Data)</h4>
+                        <p>ล้างและโหลดข้อมูลตัวอย่างใหม่อีกครั้ง</p>
+                      </div>
+                      <div class="setting-action">
+                        <button class="btn btn-danger btn-sm" id="btn-reset-demo-data">
+                          <i data-lucide="rotate-ccw"></i> รีเซ็ตข้อมูล
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </section>
+
+        </div>
+      </main>
+
+      <!-- MOBILE BOTTOM NAVIGATION -->
+      <nav class="mobile-bottom-nav">
+        <button class="mobile-nav-btn active" data-view="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>แดชบอร์ด</span>
+        </button>
+        <button class="mobile-nav-btn" data-view="daily-logs">
+          <i data-lucide="clipboard-edit"></i>
+          <span>บันทึก</span>
+        </button>
+        <button class="mobile-nav-btn" data-view="calendar">
+          <i data-lucide="calendar"></i>
+          <span>ปฏิทิน</span>
+        </button>
+        <button class="mobile-nav-btn" data-view="programs">
+          <i data-lucide="dumbbell"></i>
+          <span>โปรแกรม</span>
+        </button>
+        <button class="mobile-nav-btn" data-view="friends">
+          <i data-lucide="users"></i>
+          <span>เพื่อน</span>
+        </button>
+      </nav>
+
+    </div>
+
+    <!-- ================= MODALS CONTAINER ================= -->
+    
+    <!-- 1. Modal: Food / Nutrition Log -->
+    <div id="modal-food-log" class="modal-overlay hidden">
+      <div class="modal-card glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title"><i data-lucide="utensils" class="text-emerald"></i> บันทึกมื้ออาหาร & แคลอรี่</h3>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-food-log" class="modal-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>วันที่</label>
+              <input type="date" id="food-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label>มื้ออาหาร</label>
+              <select id="food-meal-type" class="form-input" required>
+                <option value="breakfast">มื้อเช้า (Breakfast)</option>
+                <option value="lunch">มื้อกลางวัน (Lunch)</option>
+                <option value="dinner">มื้อเย็น (Dinner)</option>
+                <option value="snack">ของว่าง / Pre-Workout</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>ชื่ออาหาร / เครื่องดื่ม</label>
+            <input type="text" id="food-name" class="form-input" placeholder="เช่น อกไก่ย่าง + ข้าวไรซ์เบอร์รี่ + สลัดผัก" required>
+          </div>
+
+          <div class="form-row form-row-4col">
+            <div class="form-group">
+              <label>พลังงาน (kcal)</label>
+              <input type="number" id="food-calories" class="form-input" placeholder="เช่น 450" required min="0">
+            </div>
+            <div class="form-group">
+              <label>โปรตีน (g)</label>
+              <input type="number" id="food-protein" class="form-input" placeholder="เช่น 40" min="0" step="0.1">
+            </div>
+            <div class="form-group">
+              <label>คาร์บ (g)</label>
+              <input type="number" id="food-carbs" class="form-input" placeholder="เช่น 45" min="0" step="0.1">
+            </div>
+            <div class="form-group">
+              <label>ไขมัน (g)</label>
+              <input type="number" id="food-fats" class="form-input" placeholder="เช่น 8" min="0" step="0.1">
+            </div>
+          </div>
+
+          <!-- Quick Food Presets / Recommendations Picker -->
+          <div class="form-group">
+            <label class="form-label-flex">
+              <span>เมนูยอดนิยม (คลิกเพื่อใส่ค่าอัตโนมัติ)</span>
+            </label>
+            <div class="food-preset-chips" id="food-preset-chips">
+              <!-- Preset chips generated by JS -->
+            </div>
+          </div>
+
+          <!-- Image Attachment (Google Drive or Local File) -->
+          <div class="form-group">
+            <label><i data-lucide="image"></i> แนบรูปภาพอาหาร (ลิงก์ Google Drive หรือ อัปโหลด)</label>
+            <div class="input-with-action">
+              <input type="url" id="food-image-url" class="form-input" placeholder="วางลิงก์รูป Google Drive เช่น https://drive.google.com/file/d/...">
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-preview-food-img">ทดสอบดูรูป</button>
+            </div>
+            <div class="image-preview-box hidden" id="food-img-preview-box">
+              <img id="food-img-preview" src="" alt="Food Preview">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>บันทึกเพิ่มเติม / หมายเหตุ</label>
+            <textarea id="food-notes" class="form-input" rows="2" placeholder="เช่น ดื่มน้ำ 500ml หลังมื้ออาหาร"></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-glass" data-close-modal>ยกเลิก</button>
+            <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> บันทึกข้อมูล</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. Modal: Workout Log -->
+    <div id="modal-workout-log" class="modal-overlay hidden">
+      <div class="modal-card modal-lg glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title"><i data-lucide="dumbbell" class="text-amber"></i> บันทึกการออกกำลังกาย</h3>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-workout-log" class="modal-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>วันที่</label>
+              <input type="date" id="workout-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label>หมวดหมู่การออกกำลังกาย</label>
+              <select id="workout-category" class="form-input" required>
+                <option value="weightlifting">เวทเทรนนิ่ง (Weight Training)</option>
+                <option value="cardio">คาร์ดิโอ (Cardio / HIIT)</option>
+                <option value="bodyweight">บอดี้เวท / Calisthenics</option>
+                <option value="yoga">โยคะ / ยืดเหยียด (Stretching)</option>
+                <option value="other">อื่นๆ</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>ชื่อโปรแกรม / กิจกรรม</label>
+              <input type="text" id="workout-title" class="form-input" placeholder="เช่น Chest & Triceps Day หรือ วิ่งลู่สลายไขมัน" required>
+            </div>
+            <div class="form-group">
+              <label>ระยะเวลาทั้งหมด (นาที)</label>
+              <input type="number" id="workout-duration" class="form-input" placeholder="เช่น 60" required min="1">
+            </div>
+            <div class="form-group">
+              <label>แคลอรี่ที่เผาผลาญ (kcal โดยประมาณ)</label>
+              <input type="number" id="workout-calories-burned" class="form-input" placeholder="เช่น 380" min="0">
+            </div>
+          </div>
+
+          <!-- Dynamic Exercise Sets Builder -->
+          <div class="form-group">
+            <div class="exercise-builder-header">
+              <label><i data-lucide="layers"></i> รายการท่าฝึกและจำนวนเซ็ต</label>
+              <button type="button" class="btn btn-secondary btn-xs" id="btn-add-exercise-row">
+                <i data-lucide="plus"></i> เพิ่มท่าฝึก
+              </button>
+            </div>
+            <div class="exercise-rows-container" id="exercise-rows-container">
+              <!-- Dynamic exercise row template will be added here -->
+            </div>
+          </div>
+
+          <!-- Image Attachment (Google Drive or Local File) -->
+          <div class="form-group">
+            <label><i data-lucide="image"></i> แนบรูปภาพการออกกำลังกาย (ลิงก์ Google Drive)</label>
+            <div class="input-with-action">
+              <input type="url" id="workout-image-url" class="form-input" placeholder="วางลิงก์ Google Drive เพื่อแสดงภาพ">
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-preview-workout-img">ดูรูป</button>
+            </div>
+            <div class="image-preview-box hidden" id="workout-img-preview-box">
+              <img id="workout-img-preview" src="" alt="Workout Preview">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>ความรู้สึก / บันทึกเพิ่มเติม</label>
+            <textarea id="workout-notes" class="form-input" rows="2" placeholder="เช่น ฟอร์มท่าดีมาก ไม่ปวดหลัง โฟกัสกล้ามเนื้อได้ดี"></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-glass" data-close-modal>ยกเลิก</button>
+            <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> บันทึกกิจกรรม</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 3. Modal: Outdoor / Competition Log -->
+    <div id="modal-outdoor-log" class="modal-overlay hidden">
+      <div class="modal-card modal-lg glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title"><i data-lucide="trophy" class="text-cyan"></i> บันทึกกิจกรรมนอกสถานที่ & การแข่งขัน</h3>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-outdoor-log" class="modal-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>วันที่</label>
+              <input type="date" id="outdoor-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label>ประเภทกิจกรรม</label>
+              <select id="outdoor-type" class="form-input" required>
+                <option value="marathon">วิ่งมาราธอน / มินิมาราธอน / Fun Run</option>
+                <option value="cycling">ปั่นจักรยาน (Cycling / Road)</option>
+                <option value="trail">เดินป่า / วิ่งเทรล (Trail Running)</option>
+                <option value="triathlon">ไตรกีฬา (Triathlon)</option>
+                <option value="badminton">แบดมินตัน / เทนนิส</option>
+                <option value="swimming">ว่ายน้ำ Outdoor / ทะเล</option>
+                <option value="climbing">ปีนหน้าผา / Bouldering</option>
+                <option value="other">กิจกรรมกลางแจ้งอื่นๆ</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>ชื่องาน / กิจกรรม</label>
+              <input type="text" id="outdoor-title" class="form-input" placeholder="เช่น Bangkok Marathon 2026 หรือ ปั่น Sky Lane" required>
+            </div>
+            <div class="form-group">
+              <label>สถานที่จัดงาน / จุดเริ่ม</label>
+              <input type="text" id="outdoor-location" class="form-input" placeholder="เช่น สวนลุมพินี, สุวรรณภูมิ">
+            </div>
+          </div>
+
+          <div class="form-row form-row-4col">
+            <div class="form-group">
+              <label>ระยะทาง (km)</label>
+              <input type="number" id="outdoor-distance" class="form-input" placeholder="เช่น 21.1" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>เวลาที่ใช้ (ชั่วโมง:นาที:วินาที)</label>
+              <input type="text" id="outdoor-duration-text" class="form-input" placeholder="เช่น 01:45:30">
+            </div>
+            <div class="form-group">
+              <label>Pace เฉลี่ย (นาที/km)</label>
+              <input type="text" id="outdoor-pace" class="form-input" placeholder="เช่น 5:15">
+            </div>
+            <div class="form-group">
+              <label>แคลอรี่เผาผลาญ (kcal)</label>
+              <input type="number" id="outdoor-calories" class="form-input" placeholder="เช่น 1150">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>ผลการแข่งขัน / เหรียญรางวัล / อันดับ</label>
+              <input type="text" id="outdoor-rank" class="form-input" placeholder="เช่น ติด Finisher Top 100, ได้เหรียญทอง">
+            </div>
+            <div class="form-group">
+              <label>สภาพอากาศ / อุณหภูมิ</label>
+              <input type="text" id="outdoor-weather" class="form-input" placeholder="เช่น มีแดดอ่อน 28°C">
+            </div>
+          </div>
+
+          <!-- Image Attachment (Google Drive) -->
+          <div class="form-group">
+            <label><i data-lucide="image"></i> แนบรูปภาพบรรยากาศ / เหรียญรางวัล (ลิงก์ Google Drive)</label>
+            <div class="input-with-action">
+              <input type="url" id="outdoor-image-url" class="form-input" placeholder="วางลิงก์ Google Drive เช่น https://drive.google.com/file/d/...">
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-preview-outdoor-img">ดูรูป</button>
+            </div>
+            <div class="image-preview-box hidden" id="outdoor-img-preview-box">
+              <img id="outdoor-img-preview" src="" alt="Outdoor Preview">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>บันทึกความประทับใจ / สรุปงาน</label>
+            <textarea id="outdoor-notes" class="form-input" rows="2" placeholder="เช่น งานจัดดีมาก น้ำพร้อม กองเชียร์แน่น วิ่งเพซตามเป้า"></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-glass" data-close-modal>ยกเลิก</button>
+            <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> บันทึกกิจกรรม Outdoor</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4. Modal: Body Metrics & BMI Log -->
+    <div id="modal-body-log" class="modal-overlay hidden">
+      <div class="modal-card glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title"><i data-lucide="scale" class="text-purple"></i> บันทึกน้ำหนัก & สัดส่วนร่างกาย</h3>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-body-log" class="modal-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>วันที่บันทึก</label>
+              <input type="date" id="body-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label>น้ำหนักตัว (kg)</label>
+              <input type="number" id="body-weight" class="form-input" placeholder="เช่น 68.5" step="0.1" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>ส่วนสูง (cm)</label>
+              <input type="number" id="body-height" class="form-input" placeholder="เช่น 175" step="0.5" required>
+            </div>
+            <div class="form-group">
+              <label>% ไขมันในร่างกาย (Body Fat %)</label>
+              <input type="number" id="body-fat" class="form-input" placeholder="เช่น 15.5 (ถ้ามี)" step="0.1">
+            </div>
+          </div>
+
+          <div class="form-row form-row-4col">
+            <div class="form-group">
+              <label>รอบอก (นิ้ว)</label>
+              <input type="number" id="body-chest" class="form-input" placeholder="เช่น 39" step="0.1">
+            </div>
+            <div class="form-group">
+              <label>รอบเอว (นิ้ว)</label>
+              <input type="number" id="body-waist" class="form-input" placeholder="เช่น 30.5" step="0.1">
+            </div>
+            <div class="form-group">
+              <label>รอบสะโพก (นิ้ว)</label>
+              <input type="number" id="body-hips" class="form-input" placeholder="เช่น 37" step="0.1">
+            </div>
+            <div class="form-group">
+              <label>รอบแขน (นิ้ว)</label>
+              <input type="number" id="body-arms" class="form-input" placeholder="เช่น 14.5" step="0.1">
+            </div>
+          </div>
+
+          <!-- Real-time BMI Indicator preview in modal -->
+          <div class="realtime-bmi-box" id="modal-bmi-preview-box">
+            <span>คำนวณค่า BMI อัตโนมัติ: <strong id="modal-bmi-calc-val">--</strong></span>
+            <span class="badge" id="modal-bmi-calc-badge">รอระบุน้ำหนัก/ส่วนสูง</span>
+          </div>
+
+          <!-- Photo Progress (Google Drive) -->
+          <div class="form-group">
+            <label><i data-lucide="image"></i> ภาพความคืบหน้ารูปร่าง (Progress Photo - ลิงก์ Google Drive)</label>
+            <div class="input-with-action">
+              <input type="url" id="body-image-url" class="form-input" placeholder="วางลิงก์รูปภาพ Google Drive">
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-preview-body-img">ดูรูป</button>
+            </div>
+            <div class="image-preview-box hidden" id="body-img-preview-box">
+              <img id="body-img-preview" src="" alt="Progress Photo">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-glass" data-close-modal>ยกเลิก</button>
+            <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> บันทึกข้อมูลสัดส่วน</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 5. Modal: Add Friend -->
+    <div id="modal-add-friend" class="modal-overlay hidden">
+      <div class="modal-card glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title"><i data-lucide="user-plus" class="text-primary"></i> เพิ่มเพื่อนใหม่อัตโนมัติ</h3>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-add-friend" class="modal-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>ชื่อ-นามสกุล / ชื่อเล่นเพื่อน</label>
+              <input type="text" id="friend-name" class="form-input" placeholder="เช่น ณัฐวุฒิ สายวิ่ง (Nut)" required>
+            </div>
+            <div class="form-group">
+              <label>เพศ</label>
+              <select id="friend-gender" class="form-input">
+                <option value="male">ชาย (Male)</option>
+                <option value="female">หญิง (Female)</option>
+                <option value="other">อื่นๆ (Other)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>วันเกิด (ระบุเพื่อคำนวณอายุอัตโนมัติ)</label>
+              <input type="date" id="friend-dob" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label>อายุที่คำนวณได้อัตโนมัติ</label>
+              <div class="form-control-static" id="friend-calculated-age-text">
+                <span class="text-emerald font-bold">-- ปี</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>รูปโปรไฟล์เพื่อน (ลิงก์ Google Drive หรือ Image URL)</label>
+            <input type="url" id="friend-avatar-url" class="form-input" placeholder="วาง URL รูปภาพ (เว้นว่างเพื่อใช้ตัวอักษรย่อ)">
+          </div>
+
+          <div class="form-group">
+            <label>เป้าหมายการออกกำลังกาย / Bio</label>
+            <textarea id="friend-bio" class="form-input" rows="2" placeholder="เช่น สายวิ่งมาราธอน ซ้อมสัปดาห์ละ 4 วัน เป้า Sub 4"></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-glass" data-close-modal>ยกเลิก</button>
+            <button type="submit" class="btn btn-primary"><i data-lucide="check"></i> บันทึกเพื่อน</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 6. Modal: View & Download Workout Program Plan -->
+    <div id="modal-program-detail" class="modal-overlay hidden">
+      <div class="modal-card modal-lg glass-panel printable-modal" id="printable-program-card">
+        <div class="modal-header">
+          <div class="modal-title-with-badge">
+            <span class="badge badge-emerald" id="prog-detail-level">Beginner</span>
+            <h3 class="modal-title" id="prog-detail-title">Full Body Starter</h3>
+          </div>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        
+        <div class="program-detail-body" id="prog-detail-content">
+          <!-- Dynamic details injected here -->
+        </div>
+
+        <div class="modal-footer no-print">
+          <button type="button" class="btn btn-glass" data-close-modal>ปิด</button>
+          <button type="button" class="btn btn-secondary" id="btn-print-program">
+            <i data-lucide="printer"></i> พิมพ์ / ดาวน์โหลด PDF
+          </button>
+          <button type="button" class="btn btn-primary" id="btn-download-program-json">
+            <i data-lucide="download"></i> ดาวน์โหลดตารางฝึก (.txt)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Modal: Day Activity Detail (from Calendar) -->
+    <div id="modal-day-detail" class="modal-overlay hidden">
+      <div class="modal-card modal-lg glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title"><i data-lucide="calendar-days" class="text-primary"></i> บันทึกกิจกรรมวันที่ <span id="day-modal-date-label">16 ก.ย. 2026</span></h3>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        <div class="day-activities-list" id="day-modal-activities-list">
+          <!-- Dynamic activities for the clicked day -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-day-modal-add-entry">
+            <i data-lucide="plus"></i> เพิ่มบันทึกในวันนี้
+          </button>
+          <button type="button" class="btn btn-glass" data-close-modal>ปิด</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Modal: Edit User Profile -->
+    <div id="modal-edit-profile" class="modal-overlay hidden">
+      <div class="modal-card glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title"><i data-lucide="user-cog" class="text-primary"></i> แก้ไขข้อมูลส่วนตัว</h3>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-edit-profile" class="modal-form">
+          <div class="form-group">
+            <label>ชื่อ-นามสกุล</label>
+            <input type="text" id="edit-profile-fullname" class="form-input" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>เพศ</label>
+              <select id="edit-profile-gender" class="form-input">
+                <option value="male">ชาย</option>
+                <option value="female">หญิง</option>
+                <option value="other">อื่นๆ</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>วันเกิด</label>
+              <input type="date" id="edit-profile-dob" class="form-input" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>น้ำหนักเริ่มต้น (kg)</label>
+              <input type="number" id="edit-profile-weight" class="form-input" step="0.1" required>
+            </div>
+            <div class="form-group">
+              <label>ส่วนสูง (cm)</label>
+              <input type="number" id="edit-profile-height" class="form-input" step="0.5" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-glass" data-close-modal>ยกเลิก</button>
+            <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> บันทึกการแก้ไข</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 9. Modal: Change PIN Code -->
+    <div id="modal-change-pin" class="modal-overlay hidden">
+      <div class="modal-card glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title"><i data-lucide="shield-alert" class="text-amber"></i> ตั้งค่ารหัส PIN 4 หลัก</h3>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        <form id="form-change-pin" class="modal-form">
+          <div class="form-group">
+            <label>รหัส PIN 4 หลักใหม่</label>
+            <input type="password" id="input-new-pin" class="form-input" placeholder="ตัวเลข 4 หลัก เช่น 1234" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required>
+          </div>
+          <div class="form-group">
+            <label>ยืนยันรหัส PIN 4 หลัก</label>
+            <input type="password" id="input-confirm-pin" class="form-input" placeholder="ยืนยันรหัส 4 หลักอีกครั้ง" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-glass" data-close-modal>ยกเลิก</button>
+            <button type="submit" class="btn btn-primary"><i data-lucide="check"></i> บันทึก PIN ใหม่</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 10. Modal: View Supabase SQL Schema -->
+    <div id="modal-sql-schema" class="modal-overlay hidden">
+      <div class="modal-card modal-lg glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title"><i data-lucide="database" class="text-primary"></i> คำสั่ง SQL Schema สำหรับ Supabase</h3>
+          <button class="modal-close-btn" data-close-modal><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-form">
+          <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:0.75rem;">
+            นำคำสั่ง SQL ด้านล่างนี้ไปวางและกด <strong>RUN</strong> ใน <a href="https://supabase.com/dashboard/project/rfuuwurlwgzorudcssny/sql" target="_blank" style="color:var(--primary); text-decoration:underline;">Supabase SQL Editor</a> เพื่อสร้างตารางทั้งหมดและ Mockup Data:
+          </p>
+          <div class="form-group">
+            <textarea id="sql-schema-textarea" class="form-input" rows="14" style="font-family: monospace; font-size: 0.8rem; background: #070a12; color: #38bdf8;" readonly></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-sql">
+              <i data-lucide="copy"></i> คัดลอกคำสั่ง SQL ทั้งหมด
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" data-close-modal>ปิด</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Lucide Icons & Scripts -->
+  <script type="module" src="/src/js/app.js"></script>
+</body>
+</html>
