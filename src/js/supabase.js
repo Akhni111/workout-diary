@@ -3,8 +3,8 @@
  */
 import { createClient } from '@supabase/supabase-js';
 
-export const SUPABASE_URL = 'https://rfuuwurlwgzorudcssny.supabase.co';
-export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJmdXV3dXJsd2d6b3J1ZGNzc255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1NDU3MjksImV4cCI6MjEwNTEyMTcyOX0.hoZboEZ9eZF0-BnSQkIuA4HkLjCLpmQXvZPMwHR8PdE';
+export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://rfuuwurlwgzorudcssny.supabase.co';
+export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJmdXV3dXJsd2d6b3J1ZGNzc255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1NDU3MjksImV4cCI6MjEwNTEyMTcyOX0.hoZboEZ9eZF0-BnSQkIuA4HkLjCLpmQXvZPMwHR8PdE';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

@@ -1072,6 +1072,10 @@ class WorkoutDiaryApp {
     // ================= SUPABASE CLOUD EVENTS =================
     const checkSupabaseStatus = async () => {
       const statusBadge = document.getElementById('supabase-status-badge');
+      const statusText = document.getElementById('supabase-status-text');
+      if (statusText) {
+        statusText.textContent = `URL: ${SUPABASE_URL}`;
+      }
       if (!statusBadge) return;
       const res = await SupabaseService.checkConnection();
       if (res.connected) {

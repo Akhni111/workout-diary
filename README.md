@@ -36,3 +36,13 @@ npm run dev
 
 ## ☁️ การตั้งค่า Supabase
 นำคำสั่ง SQL ในไฟล์ [`supabase_schema.sql`](supabase_schema.sql) ไปรันใน Supabase SQL Editor เพื่อสร้างตารางและใส่ Mockup Data เริ่มต้น
+
+## 🌐 การติดตั้งและ Deploy บน Vercel
+
+1. นำโค้ดขึ้น GitHub Repository ของคุณ
+2. เข้าไปที่ [Vercel Dashboard](https://vercel.com/dashboard) แล้วกด **Add New... -> Project**
+3. เลือก Repository ที่ต้องการนำเข้า (Import)
+4. ในส่วน **Environment Variables** เพิ่มตัวแปรต่อไปนี้:
+   - **`VITE_SUPABASE_URL`**: `https://<your-project-id>.supabase.co`
+   - **`VITE_SUPABASE_ANON_KEY`**: `<your-supabase-anon-key>`
+5. กดปุ่ม **Deploy** ระบบจะ Build และ Deploy เว็บให้พร้อมใช้งานทันที!
